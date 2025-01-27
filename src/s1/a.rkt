@@ -6,7 +6,5 @@
 
 (+ 20 40)
 
-(define (fibbonacci a)
-  (- (- a 1) (- a 2))
 
 
