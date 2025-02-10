@@ -95,9 +95,15 @@
 (define (solo-dos-iguales? lista)
   (if (< (length lista) 2)
   #f
-  (if (contiene? (rest lista) (first lista))
-    (todos-distintos? (rest lista))
-    (solo-dos-iguales? (rest lista)))))
+  (or 
+    (and (contiene? (rest lista) (first lista)) 
+         (todos-distintos? (rest lista)))
+    (and (not (contiene? (rest lista) (first lista))) 
+         (solo-dos-iguales? (rest lista))))))
+
+  #| (if (contiene? (rest lista) (first lista)) |#
+  #|   (todos-distintos? (rest lista)) |#
+  #|   (solo-dos-iguales? (rest lista))))) |#
 
 
 #| (solo-dos-iguales? '()) ; ⇒ #f |#
