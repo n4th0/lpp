@@ -1,5 +1,9 @@
 #lang racket
-
+(provide menor)
+(provide cifra-caracter)
+(provide descifra-caracter)
+(provide menor)
+(provide carta)
 
 ; (define (<name> <args>)
 ;   <body>)
@@ -247,6 +251,6 @@
       (else "nada")))
 
 
-(jugada-mano '3♥ '3♣ '3♥) ; ⇒ "trío de 3"
-(jugada-mano 'K♦ '7♠ 'K♥) ; ⇒ "pareja de 12"
-(jugada-mano '5♣ '4♣ '6♣) ; ⇒ "nada"
+#| (jugada-mano '3♥ '3♣ '3♥) ; ⇒ "trío de 3" |#
+#| (jugada-mano 'K♦ '7♠ 'K♥) ; ⇒ "pareja de 12" |#
+#| (jugada-mano '5♣ '4♣ '6♣) ; ⇒ "nada" |#
