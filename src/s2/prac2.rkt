@@ -96,7 +96,7 @@
 
 (define (descifra-caracter char indice)
   (if (entre-az? char)
-    (if (>= (char->integer char) (char->integer #\a))
+    (if (>= (char->integer chpar) (char->integer #\a))
       (encuentra-caracter (rota-indice (encuentra-indice char) (- 0 indice)))
       (integer->char (+ (char->integer (encuentra-caracter (rota-indice (encuentra-indice char) (- 0 indice)))) 
                         (- (char->integer #\A) (char->integer #\a)))))
