@@ -130,3 +130,36 @@
         (alfombra-sierpinski (/ t 3))
         (alfombra-sierpinski (/ t 3))
         (alfombra-sierpinski (/ t 3))))))
+
+
+#| (define diccionario (make-dic)) |#
+#||#
+#| (define (pascal-memo f c dic) |#
+#|   (cond  |#
+#|     ((key-exists? (cons f c) dic) (get (cons f c) dic)) |#
+#|     ((= c 0) 1) |#
+#|     ((= f 0) 1) |#
+#|     ((= c f) 1) |#
+#|     (else (+ (put (cons (- f 1) c) (pascal-memo (- f 1) c dic) dic) |#
+#|              (put (cons (- f 1) (- c 1)) (pascal-memo (- f 1) (- c 1) dic) dic))))) |#
+
+#| (pascal-memo 8 4 diccionario) ; ⇒ 70 |#
+#| (pascal-memo 40 20 diccionario) ; ⇒ 137846528820 |#
+
+
+(define (pitagoras n tr dic shape)
+  (if (= n 0)
+    (shape tr "outline" "green") ; leaf
+    ( overlay/xy; above  
+      ( overlay/xy; beside/align "bottom";
+        (if (key-exists? n dic) 
+          (rotate 45 (get n dic))
+          (rotate 45 (put n (pitagoras (- n 1) (/ tr (sqrt 2)) dic shape) dic)))
+        tr  0
+        (if (key-exists? n dic) 
+          (rotate -45 (get n dic))
+          (rotate -45 (put n (pitagoras (- n 1) (/ tr (sqrt 2)) dic shape) dic))))
+       0 (+ tr (/ tr (sqrt 2)))
+      (shape tr "outline" "brown"))))
+
+
