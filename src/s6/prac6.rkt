@@ -57,6 +57,13 @@
 #| (expande-parejas '(#t . 3) '("LPP" . 2) '(b . 4)) |#
 #| ; ⇒ (#t #t #t "LPP" "LPP" b b b b) |#
 
+(define (rotar n l)
+  (if 
+    (= n 0) l 
+    (rotar (- n 1) (append (rest l) (list (first l))))))
+
+#| (rotar 4 '(a b c d e f g)) ; ⇒ (e f g a b c d) |#
+
 
 (define (mi-foldl f ac l)
   (if (null? l) ac (mi-foldl f (f (first l) ac) (rest l))))
@@ -150,7 +157,7 @@
 (define (pitagoras n tr dic shape)
   (if (= n 0)
     (shape tr "outline" "green") ; leaf
-    ( overlay/xy; above  
+    (overlay/xy; above  
       ( overlay/xy; beside/align "bottom";
         (if (key-exists? n dic) 
           (rotate 45 (get n dic))
@@ -162,4 +169,34 @@
        0 (+ tr (/ tr (sqrt 2)))
       (shape tr "outline" "brown"))))
 
+
+
+(define (hipotenusa x)
+  (* x (sqrt 2)))
+
+(define (sierpinski-elem base)
+  (isosceles-triangle (hipotenusa (/ base 2)) 90 "outline" "black"))
+
+(define (sierpinski n ancho)
+  (if (= 0 n)
+      (sierpinski-elem ancho)
+     (above  (sierpinski (- n 1) (/ ancho 2))
+             (overlay/xy (rotate -45 (sierpinski (- n 1) (/ ancho 2)))
+                  ancho  0 (rotate 45 (sierpinski (- n 1) (/ ancho 2)))))))
+
+
+#| (define (hex s n) |#
+#|   (if (= n 0) |#
+#|     (regular-polygon s 6 "solid" "red") |#
+#|     (above |#
+#|       (above/align "left" |#
+#|           (above/align "right"  |#
+#|                       (beside (hex (* s 2/3) (- n 1)) (hex (* s 2/3) (- n 1))) |#
+#|                       (hex (* s 2/3) (- n 1)))  |#
+#|           (hex (* s 2/3) (- n 1))) |#
+
+  #|     (beside (hex (* s 2/3) (- n 1)) (hex (* s 2/3) (- n 1)))) |#
+  #|   ) |#
+  #| ) |#
+  #| ;(beside (rotate 60 (triangle s "solid" "red")) (triangle s "solid" "red") (rotate 60 (triangle s "solid" "red"))))) |#
 
