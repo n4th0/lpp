@@ -3,6 +3,8 @@
 (require rackunit)
 (require 2htdp/image)
 
+(require graphics/turtles)
+
 (require "lpp.rkt")
 
 
@@ -156,7 +158,7 @@
 
 (define (pitagoras n tr dic shape)
   (if (= n 0)
-    (shape tr "outline" "green") ; leaf
+    (shape tr "outline" "black") ; leaf
     (overlay/xy; above  
       ( overlay/xy; beside/align "bottom";
         (if (key-exists? n dic) 
@@ -167,7 +169,7 @@
           (rotate -45 (get n dic))
           (rotate -45 (put n (pitagoras (- n 1) (/ tr (sqrt 2)) dic shape) dic))))
        0 (+ tr (/ tr (sqrt 2)))
-      (shape tr "outline" "brown"))))
+      (shape tr "outline" "white"))))
 
 
 
@@ -198,5 +200,76 @@
   #|     (beside (hex (* s 2/3) (- n 1)) (hex (* s 2/3) (- n 1)))) |#
   #|   ) |#
   #| ) |#
-  #| ;(beside (rotate 60 (triangle s "solid" "red")) (triangle s "solid" "red") (rotate 60 (triangle s "solid" "red"))))) |#
+  #| ;(beside(rotate 60 (triangle s "solid" "red")) (triangle s "solid" "red") (rotate 60 (triangle s "solid" "red"))))) |#
+
+
+
+
+(define (to-list-arbol l) 
+  (cons (dato-arbol l) (to-list-bosque (hijos-arbol l))))
+
+(define (to-list-bosque l) 
+  (if (null? l)
+    '()
+    (append (to-list-arbol (first l)) (to-list-bosque (rest l)))))
+
+
+
+#| (to-list-arbol '(* (+ (5) (* (2) (3)) (10)) (- (12)))) ; ⇒ (* + 5 * 2 3 10 - 12) |#
+
+
+
+(define (altura-arbol l)
+  (if (hoja-arbol? l)
+    0
+  (+ 1 (altura-bosque (hijos-arbol l)))))
+
+
+(define (altura-bosque b)
+  (if (null? b)
+    0
+    (max (altura-arbol (first b)) (altura-bosque (rest b)))))
+
+
+#| (define (altura-arbol-fos a) |#
+#|   (foldr max 0 (map altura-bosque-fos (hijos-arbol a)))) |#
+
+#| (define (suma-datos-ab arbol)  |#
+#|   (if (vacio-arbolb? arbo) |#
+#|     0 |#
+#|     (+ (dato-arbolb arbol) |#
+#|        (suma-datos-ab (hijo-izq-arbolb arbol))  |#
+#|        (suma-datos-ab (hijo-der-arbolb arbol))))) |#
+
+(define (to-list arbol) 
+  (if (vacio-arbolb? arbol)
+    '()
+    (cons (dato-arbolb arbol)
+       (append (to-list (hijo-izq-arbolb arbol)) 
+       (to-list (hijo-der-arbolb arbol))))))
+
+(define arbolb2
+   (construye-arbolb 40 
+                 (construye-arbolb 18
+                               (construye-arbolb 3 arbolb-vacio arbolb-vacio)
+                               (construye-arbolb 23 
+                                             arbolb-vacio
+                                             (construye-arbolb 29 
+                                                           arbolb-vacio
+                                                           arbolb-vacio)))
+                 (construye-arbolb 52
+                               (construye-arbolb 47 arbolb-vacio arbolb-vacio)
+                               arbolb-vacio)))
+
+#| (to-list arbolb2) ; ⇒ (40 18 3 23 29 52 47) |#
+
+(define (cuadrado-arbolb arbol)
+  (if (vacio-arbolb? arbol)
+    arbolb-vacio
+    (construye-arbolb (* (dato-arbolb arbol) (dato-arbolb arbol))
+                    (cuadrado-arbolb (hijo-izq-arbolb arbol))
+                    (cuadrado-arbolb (hijo-der-arbolb arbol)))))
+
+
+#| (cuadrado-arbolb arbolb2) ; ⇒ (40 18 3 23 29 52 47) |#
 
