@@ -31,24 +31,25 @@
 
 
 
-; versión de la libreria 2htdp/image
-; de una variante de la alfombra de sierpinski
-(define (hipotenusa x)
-  (* x (sqrt 2)))
+; ; versión de la libreria 2htdp/image
+; ; de una variante de la alfombra de sierpinski
+; (define (hipotenusa x)
+;   (* x (sqrt 2)))
 
-(define (sierpinski-elem base)
-  (isosceles-triangle (hipotenusa (/ base 2)) 90 "outline" "black"))
+#| (define (sierpinski-elem base) |#
+#|   (isosceles-triangle (hipotenusa (/ base 2)) 90 "outline" "black")) |#
 
-(define (sierpinski n ancho)
-  (if (= 0 n)
-      (sierpinski-elem ancho)
-     (above  (sierpinski (- n 1) (/ ancho 2))
-             (overlay/xy (rotate -45 (sierpinski (- n 1) (/ ancho 2)))
-                  ancho  0 (rotate 45 (sierpinski (- n 1) (/ ancho 2)))))))
+#| (define (sierpinski n ancho l dic) |#
+#|   (if (= 0 n) |#
+#|       (sierpinski-elem ancho) |#
+#|       (above (rotate (* 90 (third l)) (sierpinski (- n 1) (/ ancho 2) l)) |#
+#|              (beside/align "bottom"  |#
+#|                 (rotate (* 90 (first l)) (sierpinski (- n 1) (/ ancho 2) l)) |#
+#|                 (rotate (* 90 (second l)) (sierpinski (- n 1) (/ ancho 2) l)))))) |#
 
 
 
-(turtles #t) ; activo las tortugas
+#| (turtles #t) ; activo las tortugas |#
 (turn 90) ; miro hacia arriba ()
 
 ; función inspirada en: https://es.wikipedia.org/wiki/Curva_del_drag%C3%B3n#[Des]plegado_del_drag%C3%B3n
@@ -204,8 +205,9 @@
     (move size)
     (turn -90))))
 
-(dragon (create-dragon-pattern 10) 10)
+#| (dragon (create-dragon-pattern 10) 10) |#
 
+; TODO
 (define (create-dragon-pattern-gold n)
   (if (= n 1) 
     (list 79.87980027)
@@ -223,3 +225,86 @@
       (turn (first n))
       (draw (* size (* 0.74274 0.74274)))
       (dragon-gold (rest n) size))))
+
+
+
+(define (call-s n f s)
+  (cond 
+    ((= n 1) (f))
+    ((= n 2) (begin 
+               (turn -90)
+               (move s)
+               (turn 180)
+               (f)
+               (move s)
+               (turn -90)))
+    ((= n 3) (begin
+               (turn -90)
+               (move s)
+               (turn 90)
+               (move s)
+               (turn 180)
+               (f)
+               (turn -90)
+               (move s)
+               (turn 90)
+               (move s)
+               (turn 180)))
+    (else (begin
+               (move s)
+               (turn -90)
+               (f)
+               (turn -90)
+               (move s)
+               (turn 180)))))
+
+
+(define (sierpinski-definitivo n l s) ; solo admite 4 transformaciones
+  (if (= n 0)
+    (begin ; empieza y acaba en la esquina
+      (draw  s)
+      (move (- s))
+      (turn -90)
+      (draw s)
+      (move (- s))
+      (turn 90))
+    (begin
+      (call-s (first l) (lambda ()(sierpinski-definitivo (- n 1) l (/ s 2))) (/ s 2))
+      (turn -90)
+      (move (/ s 2))
+      (turn 90)
+      (call-s (second l) (lambda ()(sierpinski-definitivo (- n 1) l (/ s 2))) (/ s 2))
+      (turn 90)
+      (move (/ s 2))
+      (turn -90)
+      (move (/ s 2))
+      (call-s (third l) (lambda ()(sierpinski-definitivo (- n 1) l (/ s 2))) (/ s 2))
+      (move (- (/ s 2))))))
+
+
+(define (ct )
+  (begin (clear) (turn 90)))
+
+
+(beside/align "bottom" (line 0 40 "black") (line 20 0 "black"))
+
+(define (L size)
+  (beside/align "bottom" (line 0 size "black") (line (/ size 2) 0 "black") (line (/ size 2) 0 "white")))
+
+
+
+(define (aplica-fun num fun)
+  (if (< num 4)
+    (rotate (* 90 num) (fun))
+    (flip-vertical (aplica-fun (- num 4) fun))))
+
+
+; base -> figura base la cual tiene de altura
+; y base el n-ésimo size
+(define (sierpinski n comb base size)
+  (if (= 0 n)
+    (base size)
+     (above/align "left"  (aplica-fun (third comb) (lambda () (sierpinski (- n 1) comb base (/ size 2)))) 
+       (beside/align "bottom"
+                     (aplica-fun (first comb) (lambda () (sierpinski (- n 1) comb base (/ size 2))))
+                     (aplica-fun (second comb) (lambda () (sierpinski (- n 1) comb base (/ size 2))))))))
