@@ -293,6 +293,8 @@
 
 
 
+
+
 (define (aplica-fun num fun)
   (if (< num 4)
     (rotate (* 90 num) (fun))
@@ -308,3 +310,8 @@
        (beside/align "bottom"
                      (aplica-fun (first comb) (lambda () (sierpinski (- n 1) comb base (/ size 2))))
                      (aplica-fun (second comb) (lambda () (sierpinski (- n 1) comb base (/ size 2))))))))
+
+
+; 3 7 5
+; 1 5 3
+; 7 3 0
