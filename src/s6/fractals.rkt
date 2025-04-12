@@ -295,23 +295,39 @@
 
 
 
+; aplica el caso general dependiendo
+; del número que se le pase
 (define (aplica-fun num fun)
   (if (< num 4)
     (rotate (* 90 num) (fun))
     (flip-vertical (aplica-fun (- num 4) fun))))
 
 
-; base -> figura base la cual tiene de altura
-; y base el n-ésimo size
-(define (sierpinski n comb base size)
+;;;
+; n -> niveles
+; base -> figura base
+; comb -> lista que tiene la informacion del caso general
+; size -> tamaño de la figura
+; dic -> diccionario de memoización
+;
+; se supone que hay 512 fractales, algunos de ellos se repiten (o son los mismos
+; que otro pero rotado)
+;
+; esta funcion sigue siendo muy lenta, a pesar de que está
+; memoizada (dudo de que la memoización esté bien implentada)
+;
+(define (sierpinski n comb base size dic)
   (if (= 0 n)
     (base size)
-     (above/align "left"  (aplica-fun (third comb) (lambda () (sierpinski (- n 1) comb base (/ size 2)))) 
+     ; (above  (aplica-fun (third comb) (lambda () (put (- n 1) (sierpinski (- n 1) comb base (/ size 2) dic)))) ; para el normal
+     (above/align "left"  (aplica-fun (third comb) (lambda () (put (- n 1) (sierpinski (- n 1) comb base (/ size 2) dic)))) 
        (beside/align "bottom"
-                     (aplica-fun (first comb) (lambda () (sierpinski (- n 1) comb base (/ size 2))))
-                     (aplica-fun (second comb) (lambda () (sierpinski (- n 1) comb base (/ size 2))))))))
+                     (aplica-fun (first comb) (lambda () (get (- n 1) dic)))
+                     (aplica-fun (second comb) (lambda () (get (- n 1) dic)))))))
 
+;
+; (sierpinski 8 (list 3 7 5) L 25 (make-dic))
+; (sierpinski 8 (list 1 5 3) L 25 (make-dic))
+; (sierpinski 8 (list 7 3 0) L 25 (make-dic))
+; (sierpinski 8 (list 2 2 2) L 25 (make-dic))
 
-; 3 7 5
-; 1 5 3
-; 7 3 0
